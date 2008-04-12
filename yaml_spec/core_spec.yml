@@ -1,0 +1,8 @@
+For outgoing connections core should:
+  - open socket and add connected socket to socket watchlist
+  - open socket and create an instance of class supplied and save connection information there
+  - should handle exception for connection failure
+  - should add fd to write_fd and wait for actual connection on delay.
+
+For Server Connections core should:
+  - open socket and add the disconnected socket to listen list

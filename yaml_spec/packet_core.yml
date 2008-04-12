@@ -1,0 +1,14 @@
+Packet Core in general when mixed inside a class:
+  - allow the class to act as a reactor
+  - should start a server on specified port
+  - should let clients connect to the server
+  - should be able to connect to external servers
+  - should be able to read data from clients when socket is ready
+  - should be able to write data to clients when socket is ready for write
+  - should invoke receive_data method data is receieved from clients
+  - should invoke post_init when client connects
+  - should invoke unbind when a client disconnects
+  - should invoke connection_completed when connection to external server is connected.
+  - should check for ready timers on each iteration
+  - should run proper timer on each iteration.
+  - should implmenet reconnect method for allowing lost external connections to be reconnected.

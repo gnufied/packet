@@ -1,0 +1,6 @@
+Double Keyed Hash in general:
+  - should allow muliple keys while storing the value in hash
+  - should return correct value when either of the keys is used
+  - should return nil if nither of keys match
+  - should allow deletion of value from hash based on either of keys
+  
