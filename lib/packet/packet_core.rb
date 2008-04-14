@@ -53,7 +53,7 @@ module Packet
 
       def reconnect(server,port,handler)
         raise "invalid handler" unless handler.respond_to?(:connection_completed)
-        if !handler.closed? && connections.keys.include?(handler.connection.fileno)
+        if !handler.connection.closed? && connections.keys.include?(handler.connection.fileno)
           return handler
         end
         connect(server,port,handler)
