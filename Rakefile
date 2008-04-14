@@ -93,3 +93,10 @@ task :yaml_to_spec do
     t+(s ?%.context "#{c}" do.+s.map{|d|%.\n  xspecify "#{d}" do\n  end\n.}*''+"end\n\n":'')
   }.strip
 end
+
+namespace :git do
+  desc "Push changes to central git repo"
+  task :push do
+    sh("git push origin master")
+  end
+end
