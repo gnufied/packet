@@ -135,7 +135,7 @@ module Packet
 
 #         worker_klass.start_worker(:write_end => worker_write_end,:read_end => worker_read_end,\
 #                                     :options => worker_options)
-        exec "packet_worker_runner #{worker_read_end.fileno}:#{worker_write_end.fileno}:#{t_worker_name}:#{option_dump_length}:#{WORKER_ROOT}"
+        exec form_cmd_line(worker_read_end.fileno,worker_write_end.fileno,t_worker_name,option_dump_length)
       end
       #Process.detach(pid)
       [master_read_end,master_write_end].each { |x| enable_nonblock(x) }
@@ -157,5 +157,12 @@ module Packet
       worker_write_end.close
       read_ios << master_read_end
     end # end of fork_and_load method
+
+    def form_cmd_line *args
+      min_string = "packet_worker_runner #{args[0]}:#{args[1]}:#{args[2]}:#{args[3]}"
+      min_string << ":#{WORKER_ROOT}" if defined? WORKER_ROOT
+      min_string << ":#{WORKER_LOAD_ENV}" if defined? WORKER_LOAD_ENV
+      min_string
+    end
   end # end of Reactor class
 end # end of Packet module

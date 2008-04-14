@@ -8,10 +8,13 @@ module Packet
   class WorkerRunner
     include Packet::NbioHelper
     def initialize args
+
       cmd_args = args.split(':')
       worker_name = cmd_args[2]
       initial_arg_data_length = cmd_args[3].to_i
       @worker_root = cmd_args[4]
+      @worker_load_env = cmd_args[5]
+      require @worker_load_env if @worker_load_env
 
       @worker_read_fd = UNIXSocket.for_fd(cmd_args[0].to_i)
 
@@ -41,8 +44,7 @@ module Packet
   end
 end
 
-if __FILE__ == $0
-  Packet::WorkerRunner.new(ARGV[0])
-end
+Packet::WorkerRunner.new(ARGV[0])
+
 
 
