@@ -310,8 +310,8 @@ module Packet
           return
         end
         handler_instance.signature = binding_str
-        connections[t_socket.fileno] =
-          OpenStruct.new(:socket => t_socket, :instance => handler_instance, :signature => handler_instance.signature,:sock_addr => sock_addr)
+        klass = Struct.new(:socket,:instance,:signature,:sock_addr)
+        connections[t_socket.fileno] = klass.new(t_socket,handler_instance,handler_instance.signature,sock_addr)
         block.call(handler_instance) if block
         handler_instance.connection_completed if handler_instance.respond_to?(:connection_completed)
       end

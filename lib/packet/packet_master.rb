@@ -135,7 +135,7 @@ module Packet
 
 #         worker_klass.start_worker(:write_end => worker_write_end,:read_end => worker_read_end,\
 #                                     :options => worker_options)
-        exec "packet_worker_runner #{worker_read_end.fileno}:#{worker_write_end.fileno}:#{t_worker_name}:#{option_dump_length}"
+        exec "packet_worker_runner #{worker_read_end.fileno}:#{worker_write_end.fileno}:#{t_worker_name}:#{option_dump_length}:#{WORKER_ROOT}"
       end
       #Process.detach(pid)
       [master_read_end,master_write_end].each { |x| enable_nonblock(x) }

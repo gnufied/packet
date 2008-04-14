@@ -22,6 +22,8 @@ module Packet
       t_instance
     end
 
+    def self.is_worker?; true; end
+
     def initialize
       super
       @read_ios << msg_reader
