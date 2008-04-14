@@ -8,7 +8,6 @@ module Packet
     attr_accessor :fd_write_end
     attr_accessor :workers, :reactor,:outbound_data
 
-
     def initialize(lifeline_socket,worker_pid,p_reactor)
       @lifeline = lifeline_socket
       @pid = worker_pid

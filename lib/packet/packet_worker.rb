@@ -14,6 +14,7 @@ module Packet
       # @fd_reader = args.shift if args.length > 2
       @msg_writer = messengers[:write_end]
       @msg_reader = messengers[:read_end]
+
       t_instance = new
       t_instance.worker_options = messengers[:options]
       t_instance.worker_init if t_instance.respond_to?(:worker_init)
@@ -90,4 +91,5 @@ module Packet
 
   end # end of class#Worker
 end
+
 

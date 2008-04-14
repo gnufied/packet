@@ -79,11 +79,8 @@ module Packet
     end
 
     def load_workers
-      if defined?(WORKER_ROOT)
-        worker_root = WORKER_ROOT
-      else
-        worker_root = "#{PACKET_APP}/worker"
-      end
+      worker_root = defined?(WORKER_ROOT) ? WORKER_ROOT : "#{PACKET_APP}/worker"
+
       t_workers = Dir["#{worker_root}/**/*.rb"]
       return if t_workers.empty?
       t_workers.each do |b_worker|
@@ -106,10 +103,13 @@ module Packet
         fork_and_load(worker_klass,worker_options)
       rescue LoadError
         puts "no such worker #{worker_name}"
-      rescue MissingSourceFile
-        puts "no such worker #{worker_name}"
         return
       end
+    end
+
+    def enable_nonblock io
+      f = io.fcntl(Fcntl::F_GETFL,0)
+      io.fcntl(Fcntl::F_SETFL,Fcntl::O_NONBLOCK | f)
     end
 
 
@@ -122,16 +122,23 @@ module Packet
       master_read_end,worker_write_end = UNIXSocket.pair(Socket::SOCK_STREAM)
       # socket to which master process is going to write
       worker_read_end,master_write_end = UNIXSocket.pair(Socket::SOCK_STREAM)
-      # worker_read_fd,master_write_fd = UNIXSocket.pair
 
-      if((pid = fork()).nil?)
-        $0 = "ruby #{worker_klass.worker_name}"
+      option_dump = Marshal.dump(worker_options)
+      option_dump_length = option_dump.length
+      master_write_end.write(option_dump)
+
+      if(!(pid = fork))
+        # $0 = "ruby #{worker_klass.worker_name}"
         [master_write_end,master_read_end].each { |x| x.close }
 
-        worker_klass.start_worker(:write_end => worker_write_end,:read_end => worker_read_end,\
-                                  :options => worker_options)
+        [worker_read_end,worker_write_end].each { |x| enable_nonblock(x) }
+
+#         worker_klass.start_worker(:write_end => worker_write_end,:read_end => worker_read_end,\
+#                                     :options => worker_options)
+        exec "packet_worker_runner #{worker_read_end.fileno}:#{worker_write_end.fileno}:#{t_worker_name}:#{option_dump_length}"
       end
-      Process.detach(pid)
+      #Process.detach(pid)
+      [master_read_end,master_write_end].each { |x| enable_nonblock(x) }
 
       worker_name_key = gen_worker_key(t_worker_name,worker_options[:job_key])
 

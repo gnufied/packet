@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 EVAL_APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__) + "/.."))
 ["extras","bin","worker","lib"].each { |x| $LOAD_PATH.unshift(EVAL_APP_ROOT + "/#{x}")}
 
@@ -16,7 +18,7 @@ class Foo
 #     data_callback = Packet::Callback.new { |data| show_result(data) }
 #     workers[:no_proxy_worker].send_request(:data => p_data,:callback => data_callback)
     ask_worker(:no_proxy_worker,:data => p_data, :type => :request)
-    p reactor.live_workers
+    #p reactor.live_workers
     # ask_worker(:dynamic_worker,:job_key => :hello_world, :data => p_data, :type => :request)
   end
 
@@ -29,7 +31,7 @@ class Foo
   end
 
   def connection_completed
-    puts "calling connection completed" 
+    puts "calling connection completed"
     #add_periodic_timer(4) { send_data("hello\n")}
     start_worker(:worker => :dynamic1_worker, :job_key => :hello_world)
 #     100.times do |i|

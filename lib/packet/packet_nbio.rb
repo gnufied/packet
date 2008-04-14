@@ -45,7 +45,7 @@ module Packet
         raise DisconnectError.new(p_sock)
       end
     end
-    
+
     # write the data in socket buffer and schedule the thing
     def write_and_schedule sock
       outbound_data.each_with_index do |t_data,index|
@@ -61,6 +61,14 @@ module Packet
       reactor.cancel_write(sock) if outbound_data.empty?
     end
 
+    # returns Marshal dump of the specified object
+    def object_dump p_data
+      object_dump = Marshal.dump(p_data)
+      dump_length = object_dump.length.to_s
+      length_str = dump_length.rjust(9,'0')
+      final_data = length_str + object_dump
+    end
+
     # method dumps the object in a protocol format which can be easily picked by a recursive descent parser
     def dump_object(p_data,p_sock)
       object_dump = Marshal.dump(p_data)
@@ -68,8 +76,8 @@ module Packet
       length_str = dump_length.rjust(9,'0')
       final_data = length_str + object_dump
       outbound_data << final_data
-      begin 
-        write_and_schedule(p_sock) 
+      begin
+        write_and_schedule(p_sock)
       rescue DisconnectError => sock
         close_connection(sock)
       end

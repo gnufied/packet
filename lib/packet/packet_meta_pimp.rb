@@ -10,7 +10,7 @@ class Packet::MetaPimp < Packet::Pimp
     @worker_status = nil
     @worker_result = nil
     @worker_key = nil
-    @tokenizer = BinParser.new
+    @tokenizer = Packet::BinParser.new
   end
 
   # will be invoked whenever there is a response from the worker

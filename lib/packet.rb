@@ -6,6 +6,7 @@ require "yaml"
 require "forwardable"
 require "ostruct"
 require "thread"
+require "fcntl"
 
 require "packet/packet_parser"
 require "packet/packet_guid"
