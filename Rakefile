@@ -55,10 +55,10 @@ spec = Gem::Specification.new do |s|
   s.email = 'mail@gnufied.org'
   s.homepage = 'http://code.google.com/p/packet/'
   s.required_ruby_version = '>= 1.8.5'
-
   s.files = %w(MIT-LICENSE README Rakefile TODO) + Dir.glob("{spec,lib,examples}/**/*")
-
   s.require_path = "lib"
+  s.bindir = "bin"
+  s.executables = "packet_worker_runner"
 end
 
 Rake::GemPackageTask.new(spec) do |p|
