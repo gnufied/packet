@@ -143,7 +143,7 @@ module Packet
         if UNIXSocket === t_sock && internal_scheduled_write[fileno].nil?
           write_ios << t_sock
           internal_scheduled_write[t_sock.fileno] ||= self
-        elsif write_scheduled[fileno].nil?
+        elsif write_scheduled[fileno].nil? && !t_sock.is_a? UNIXSocket
           write_ios << t_sock
           write_scheduled[fileno] ||= connections[fileno].instance
         end
