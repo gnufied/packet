@@ -51,13 +51,14 @@ module Packet
       outbound_data.each_with_index do |t_data,index|
         leftover = write_once(t_data,sock)
         if leftover.empty?
-          outbound_data.delete_at(index)
+          outbound_data[index] = nil
         else
           outbound_data[index] = leftover
           reactor.schedule_write(sock,self)
           break
         end
       end
+      outbound_data.compact!
       reactor.cancel_write(sock) if outbound_data.empty?
     end
 
