@@ -8,9 +8,11 @@ class NoProxyWorker < Packet::Worker
   end
 
   def receive_data data_obj
-    eval_data = eval(data_obj[:data])
-    data_obj[:data] = eval_data
-    data_obj[:type] = :response
-    send_data(data_obj)
+    puts "calling receieve data"
+    p data_obj[:data].join.size
+#     eval_data = eval(data_obj[:data])
+#     data_obj[:data] = eval_data
+#     data_obj[:type] = :response
+#     send_data(data_obj)
   end
 end

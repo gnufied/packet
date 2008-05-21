@@ -138,12 +138,12 @@ module Packet
 
       end
 
-      def schedule_write(t_sock)
+      def schedule_write(t_sock,internal_instance = nil)
         fileno = t_sock.fileno
         if UNIXSocket === t_sock && internal_scheduled_write[fileno].nil?
           write_ios << t_sock
-          internal_scheduled_write[t_sock.fileno] ||= self
-        elsif write_scheduled[fileno].nil? && !t_sock.is_a? UNIXSocket
+          internal_scheduled_write[t_sock.fileno] ||= internal_instance
+        elsif write_scheduled[fileno].nil? && !(t_sock.is_a?(UNIXSocket))
           write_ios << t_sock
           write_scheduled[fileno] ||= connections[fileno].instance
         end
@@ -162,12 +162,12 @@ module Packet
       def handle_write_event(p_ready_fds)
         p_ready_fds.each do |sock_fd|
           fileno = sock_fd.fileno
-          if UNIXSocket === sock_fd && internal_scheduled_write[fileno]
-            write_and_schedule(sock_fd)
+          if UNIXSocket === sock_fd && (internal_instance = internal_scheduled_write[fileno])
+            internal_instance.write_and_schedule(sock_fd)
           elsif extern_opts = connection_completion_awaited[fileno]
             complete_connection(sock_fd,extern_opts)
           elsif handler_instance = write_scheduled[fileno]
-            handler_instance.write_scheduled(sock_fd)
+            handler_instance.write_and_schedule(sock_fd)
           end
         end
       end

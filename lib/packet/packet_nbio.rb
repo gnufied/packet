@@ -54,7 +54,7 @@ module Packet
           outbound_data.delete_at(index)
         else
           outbound_data[index] = leftover
-          reactor.schedule_write(sock)
+          reactor.schedule_write(sock,self)
           break
         end
       end
