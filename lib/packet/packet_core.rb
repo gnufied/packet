@@ -277,7 +277,6 @@ module Packet
             timer.run
             @timer_hash.delete(key) if !timer.respond_to?(:interval)
           end
-
         end
       end
 
