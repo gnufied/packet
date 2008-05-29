@@ -24,7 +24,6 @@ typedef struct cBst {
 } cBst;
 
 static VALUE bst_initialize(VALUE self) {
-  //rb_iv_set(self,"@data_string",data_string);
   return self;
 }
 
@@ -175,3 +174,5 @@ void Init_packet_bst() {
   rb_define_method(packet_bst_class,"each", rb_bst_each,0);
   rb_define_method(packet_bst_class,"delete",rb_bst_delete,1);
 }
+
+

@@ -150,11 +150,13 @@ module Packet
       end
 
       def cancel_write(t_sock)
-        fileno = t_sock.fileno
-        if UNIXSocket === t_sock
-          internal_scheduled_write.delete(fileno)
-        else
-          write_scheduled.delete(fileno)
+        if !t_sock.closed?
+          fileno = t_sock.fileno
+          if UNIXSocket === t_sock
+            internal_scheduled_write.delete(fileno)
+          else
+            write_scheduled.delete(fileno)
+          end
         end
         write_ios.delete(t_sock)
       end
