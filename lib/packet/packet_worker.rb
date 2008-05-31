@@ -60,16 +60,16 @@ module Packet
     # FIXME: this method is being duplicated between packet and worker classes, may be its a
     # good idea to merge them.
     def provide_workers(handler_instance,connection)
-      class << handler_instance
-        extend Forwardable
-        attr_accessor :worker, :connection, :reactor, :initialized, :signature
-        include NbioHelper
-        include Connection
-        def_delegators :@reactor, :start_server, :connect, :add_periodic_timer, :add_timer, :cancel_timer,:reconnect
-      end
-      handler_instance.connection = connection
+#      class << handler_instance
+#        extend Forwardable
+#        attr_accessor :worker, :connection, :reactor, :initialized, :signature
+#        include NbioHelper
+#        include Connection
+#        def_delegators :@reactor, :start_server, :connect, :add_periodic_timer, :add_timer, :cancel_timer,:reconnect
+#      end
+#      handler_instance.connection = connection
       handler_instance.worker = self
-      handler_instance.reactor = self
+#      handler_instance.reactor = self
     end
 
     def log log_data

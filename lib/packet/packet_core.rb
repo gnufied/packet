@@ -214,9 +214,10 @@ module Packet
         handler_instance = connections[t_sock.fileno].instance
         begin
           t_data = read_data(t_sock)
-          handler_instance.receive_data(t_data) if handler_instance.respond_to?(:receive_data)
+          # FIXME: I can avoid these checks of respond_to? and directly let the connection handler have these methods
+          handler_instance.receive_data(t_data) #if handler_instance.respond_to?(:receive_data)
         rescue DisconnectError => sock_error
-          handler_instance.receive_data(sock_error.data) if handler_instance.respond_to?(:receive_data)
+          handler_instance.receive_data(sock_error.data) #if handler_instance.respond_to?(:receive_data)
           handler_instance.close_connection
         end
       end
@@ -295,7 +296,7 @@ module Packet
         return p_module if(!p_module.is_a?(Class) and !p_module.is_a?(Module))
         handler =
           if(p_module and p_module.is_a?(Class))
-            p_module
+            p_module and p_module.send(:include,Connection)
           else
             Class.new(Connection) { p_module and include p_module }
           end
@@ -305,16 +306,19 @@ module Packet
       def decorate_handler(t_socket,actually_connected,sock_addr,t_module,&block)
         handler_instance = initialize_handler(t_module)
         connection_callbacks[:after_connection].each { |t_callback| self.send(t_callback,handler_instance,t_socket)}
+        #handler_instance.worker = @live_workers
+        handler_instance.connection = t_socket
+        handler_instance.reactor = self
         handler_instance.invoke_init unless handler_instance.initialized
         unless actually_connected
-          handler_instance.unbind if handler_instance.respond_to?(:unbind)
+          handler_instance.unbind #if handler_instance.respond_to?(:unbind)
           return
         end
         handler_instance.signature = binding_str
         klass = Struct.new(:socket,:instance,:signature,:sock_addr)
         connections[t_socket.fileno] = klass.new(t_socket,handler_instance,handler_instance.signature,sock_addr)
         block.call(handler_instance) if block
-        handler_instance.connection_completed if handler_instance.respond_to?(:connection_completed)
+        handler_instance.connection_completed #if handler_instance.respond_to?(:connection_completed)
       end
 
     end # end of module#CommonMethods
