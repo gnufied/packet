@@ -4,9 +4,8 @@ module Packet
     def self.included(base_klass)
       base_klass.extend(ClassMethods)
       base_klass.instance_eval do
-        @@connection_callbacks ||= {}
-
-        cattr_accessor :connection_callbacks
+        iattr_accessor :connection_callbacks
+        inheritable_attribute(:connection_callbacks,:default => {})
         attr_accessor :read_ios, :write_ios, :listen_sockets
         attr_accessor :connection_completion_awaited,:write_scheduled
         attr_accessor :connections, :windows_flag
@@ -305,13 +304,14 @@ module Packet
 
       def decorate_handler(t_socket,actually_connected,sock_addr,t_module,&block)
         handler_instance = initialize_handler(t_module)
-        connection_callbacks[:after_connection].each { |t_callback| self.send(t_callback,handler_instance,t_socket)}
-        #handler_instance.worker = @live_workers
+        after_connection_callbacks = connection_callbacks ? connection_callbacks[:after_connection] : nil
+        after_connection_callbacks && after_connection_callbacks.each { |t_callback| self.send(t_callback,handler_instance,t_socket)}
+        handler_instance.worker = self
         handler_instance.connection = t_socket
         handler_instance.reactor = self
         handler_instance.invoke_init unless handler_instance.initialized
         unless actually_connected
-          handler_instance.unbind #if handler_instance.respond_to?(:unbind)
+          handler_instance.unbind
           return
         end
         handler_instance.signature = binding_str
@@ -319,8 +319,10 @@ module Packet
         connections[t_socket.fileno] = klass.new(t_socket,handler_instance,handler_instance.signature,sock_addr)
         block.call(handler_instance) if block
         handler_instance.connection_completed #if handler_instance.respond_to?(:connection_completed)
+        handler_instance
       end
 
     end # end of module#CommonMethods
   end #end of module#Core
 end #end of module#Packet
+

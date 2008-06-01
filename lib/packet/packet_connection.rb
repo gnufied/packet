@@ -58,16 +58,34 @@ module Packet
       reactor.start_server(ip,port,t_module,block)
     end
     
-    # could have been implemented as delegators, but has been hand implemented for speed
-    def start_server *args; reactor.start_server(*args); end
-    def connect *args; reactor.connect(*args); end
-    def add_periodic_timer *args; reactor.add_periodic_timer(*args); end
-    def add_timer *args; reactor.add_timer(*args); end
-    def cancel_timer *args; reactor.cancel_timer(*args); end
-    def reconnect *args; reactor.reconnect(*args); end
+    def connect ip,port,t_module,&block
+      reactor.connect(ip,port,t_module,block)
+    end
     
-    def start_worker *args; reactor.start_worker(*args); end
-    def delete_worker *args; reactor.delete_worker(*args); end
+    def add_periodic_timer interval, &block
+      reactor.add_periodic_timer(interval,block)
+    end
+    
+    def add_timer(t_time,&block)
+      reactor.add_timer(t_time,block)
+    end
+    
+    def cancel_timer(t_timer)
+      reactor.cancel_timer(t_timer)
+    end
+    
+    def reconnect server,port,handler
+      reactor.reconnect(server,port,handler)
+    end
+    
+    def start_worker(worker_options = {})
+      reactor.start_worker(worker_options)
+    end
+    
+    def delete_worker worker_options = {}
+      reactor.delete_worker(worker_options)
+    end
+    
   end # end of class Connection
 end # end of module Packet
 

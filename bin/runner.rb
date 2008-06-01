@@ -14,16 +14,16 @@ class Foo
     # @tokenizer.extract(p_data).each do |t_data|
     # send_data(p_data)
     #     end
-    @tokenizer.extract(p_data) do |complete_message|
-      client_data = Marshal.load(complete_message)
-      #p "Receieved message in server : #{client_data.join.size}"
-      #ask_worker(:no_proxy_worker,:data => client_data,:type => :request)
-      send_object(client_data)
-    end
+#    @tokenizer.extract(p_data) do |complete_message|
+#      client_data = Marshal.load(complete_message)
+#      #p "Receieved message in server : #{client_data.join.size}"
+#      #ask_worker(:no_proxy_worker,:data => client_data,:type => :request)
+#      send_object(client_data)
+#    end
 
     #     data_callback = Packet::Callback.new { |data| show_result(data) }
     #     workers[:no_proxy_worker].send_request(:data => p_data,:callback => data_callback)
-    # ask_worker(:no_proxy_worker,:data => p_data, :type => :request)
+    ask_worker(:no_proxy_worker,:data => p_data, :type => :request)
     #p reactor.live_workers
     # ask_worker(:dynamic_worker,:job_key => :hello_world, :data => p_data, :type => :request)
   end
