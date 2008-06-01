@@ -6,7 +6,7 @@ module Packet
     attr_accessor :result_hash
 
     attr_accessor :live_workers
-    after_connection :provide_workers
+    #after_connection :provide_workers
 
     def self.server_logger= (log_file_name)
       @@server_logger = log_file_name

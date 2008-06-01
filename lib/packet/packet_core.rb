@@ -297,7 +297,7 @@ module Packet
           if(p_module and p_module.is_a?(Class))
             p_module and p_module.send(:include,Connection)
           else
-            Class.new(Connection) { p_module and include p_module }
+            Class.new { include Connection; include p_module; }
           end
         return handler.new
       end
