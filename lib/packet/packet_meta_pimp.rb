@@ -59,7 +59,7 @@ class Packet::MetaPimp < Packet::Pimp
       end
     elsif client_signature = data_options[:client_signature]
       begin
-        reactor.connections[client_signature].instance.worker_receive(data_options)
+        reactor.connections[client_signature][:instance].worker_receive(data_options)
       rescue
       end
     end

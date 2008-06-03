@@ -144,7 +144,7 @@ module Packet
           internal_scheduled_write[t_sock.fileno] ||= internal_instance
         elsif write_scheduled[fileno].nil? && !(t_sock.is_a?(UNIXSocket))
           write_ios << t_sock
-          write_scheduled[fileno] ||= connections[fileno].instance
+          write_scheduled[fileno] ||= connections[fileno][:instance]
         end
       end
 
@@ -210,7 +210,7 @@ module Packet
       end
 
       def read_external_socket(t_sock)
-        handler_instance = connections[t_sock.fileno].instance
+        handler_instance = connections[t_sock.fileno][:instance]
         begin
           t_data = read_data(t_sock)
           handler_instance.receive_data(t_data)
@@ -314,9 +314,12 @@ module Packet
           return
         end
         handler_instance.signature = binding_str
-        # An Struct is more fashionable, but will have some performance hit, can use a simple hash here
-        klass = Struct.new(:socket,:instance,:signature,:sock_addr)
-        connections[t_socket.fileno] = klass.new(t_socket,handler_instance,handler_instance.signature,sock_addr)
+        # FIXME: An Struct is more fashionable, but will have some performance hit, can use a simple hash here
+        # klass = Struct.new(:socket,:instance,:signature,:sock_addr)
+        connection_data = { :socket => t_socket,:instance => handler_instance,:signature => binding_str,:sock_addr => sock_addr }
+        connections[t_socket.fileno] = connection_data
+#         connections[t_socket.fileno] = klass.new(t_socket,handler_instance,handler_instance.signature,sock_addr)
+
         block.call(handler_instance) if block
         handler_instance.connection_completed #if handler_instance.respond_to?(:connection_completed)
         handler_instance

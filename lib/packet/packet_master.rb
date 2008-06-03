@@ -30,27 +30,27 @@ module Packet
       @result_hash[worker_key.to_sym] = result
     end
 
-     def provide_workers(handler_instance,t_sock)
-       class << handler_instance
-         extend Forwardable
-         attr_accessor :workers,:connection,:reactor, :initialized,:signature
+#     def provide_workers(handler_instance,t_sock)
+#       class << handler_instance
+#         extend Forwardable
+#         attr_accessor :workers,:connection,:reactor, :initialized,:signature
 
-         def ask_worker(*args)
-           worker_name = args.shift
-           data_options = *args
-           worker_name_key = gen_worker_key(worker_name,data_options[:job_key])
-           data_options[:client_signature] = connection.fileno
-           reactor.live_workers[worker_name_key].send_request(data_options)
-         end
+#         def ask_worker(*args)
+#           worker_name = args.shift
+#           data_options = *args
+#           worker_name_key = gen_worker_key(worker_name,data_options[:job_key])
+#           data_options[:client_signature] = connection.fileno
+#           reactor.live_workers[worker_name_key].send_request(data_options)
+#         end
 
-         def_delegators(:@reactor, :start_server, :connect, :add_periodic_timer, \
-                          :add_timer, :cancel_timer,:reconnect, :start_worker,:delete_worker)
+#         def_delegators(:@reactor, :start_server, :connect, :add_periodic_timer, \
+#                          :add_timer, :cancel_timer,:reconnect, :start_worker,:delete_worker)
 
-       end
-       handler_instance.worker = @live_workers
-       handler_instance.connection = t_sock
-       handler_instance.reactor = self
-     end
+#       end
+#       handler_instance.worker = @live_workers
+#       handler_instance.connection = t_sock
+#       handler_instance.reactor = self
+#     end
 
     def handle_internal_messages(t_sock)
       sock_fd = t_sock.fileno

@@ -11,6 +11,7 @@ require "packet"
 
 class Foo
   def receive_data p_data
+    p p_data
     # @tokenizer.extract(p_data).each do |t_data|
     # send_data(p_data)
     #     end
