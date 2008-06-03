@@ -176,7 +176,7 @@ module Packet
       def handle_read_event(p_ready_fds)
         ready_fds = p_ready_fds.flatten.compact
         ready_fds.each do |t_sock|
-          if(unix? && t_sock.is_a?(UNIXSocket))
+          if(t_sock.is_a?(UNIXSocket))
             handle_internal_messages(t_sock)
           else
             handle_external_messages(t_sock)
@@ -215,7 +215,7 @@ module Packet
           t_data = read_data(t_sock)
           handler_instance.receive_data(t_data)
         rescue DisconnectError => sock_error
-          handler_instance.receive_data(sock_error.data)
+          handler_instance.receive_data(sock_error.data) unless (sock_error.data).empty?
           handler_instance.close_connection
         end
       end
