@@ -7,7 +7,6 @@ module Packet
     iattr_accessor :no_auto_load
 
     attr_accessor :worker_started, :worker_options
-    #after_connection :provide_workers
 
     # method initializes the eventloop for the worker
     def self.start_worker(messengers = {})

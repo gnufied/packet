@@ -213,10 +213,9 @@ module Packet
         handler_instance = connections[t_sock.fileno].instance
         begin
           t_data = read_data(t_sock)
-          # FIXME: I can avoid these checks of respond_to? and directly let the connection handler have these methods
-          handler_instance.receive_data(t_data) #if handler_instance.respond_to?(:receive_data)
+          handler_instance.receive_data(t_data)
         rescue DisconnectError => sock_error
-          handler_instance.receive_data(sock_error.data) #if handler_instance.respond_to?(:receive_data)
+          handler_instance.receive_data(sock_error.data)
           handler_instance.close_connection
         end
       end
@@ -315,6 +314,7 @@ module Packet
           return
         end
         handler_instance.signature = binding_str
+        # An Struct is more fashionable, but will have some performance hit, can use a simple hash here
         klass = Struct.new(:socket,:instance,:signature,:sock_addr)
         connections[t_socket.fileno] = klass.new(t_socket,handler_instance,handler_instance.signature,sock_addr)
         block.call(handler_instance) if block

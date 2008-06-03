@@ -64,6 +64,35 @@ context "For Packet Core using classes" do
     d.respond_to?(:add_periodic_timer).should == true
     d.respond_to?(:add_timer).should == true
   end
+  
+  specify "unbind callbacks for after unbind should work" do
+    class Baz; include Packet::Core; after_unbind :say_hello; end
+    a = Baz.new
+    a.expects(:say_hello).returns(true)
+    socket_obj = mock()
+    client_socket = mock()
+    socket_obj.expects(:accept_nonblock).returns(client_socket)
+    client_socket.expects(:setsockopt).returns(true)
+    client_socket.expects(:fileno).returns(10)
+    
+    sock_opts = {:socket => socket_obj,:module => ConnectionObj}
+    d = a.accept_connection(sock_opts)
+  end
+
+  specify "unbind callbacks for before unbind should work" do
+    class Bleh; include Packet::Core; after_unbind :say_hello; end
+    a = Bleh.new
+    a.expects(:say_hello).returns(true)
+    socket_obj = mock()
+    client_socket = mock()
+    socket_obj.expects(:accept_nonblock).returns(client_socket)
+    client_socket.expects(:setsockopt).returns(true)
+    client_socket.expects(:fileno).returns(10)
+    
+    sock_opts = {:socket => socket_obj,:module => ConnectionObj}
+    d = a.accept_connection(sock_opts)
+  end
+  
 end
 
 context "Packet Core using modules" do 

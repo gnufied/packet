@@ -56,6 +56,9 @@ class Foo
   def wow
     #puts "Wow"
   end
+  def unbind
+    puts "Client disconnected"
+  end
 end
 
 Packet::Reactor.run do |t_reactor|

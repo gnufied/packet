@@ -1,6 +1,3 @@
-# FIMXE: following class must modify the fd_watchlist thats being monitored by
-# main eventloop.
-
 module Packet
   module Connection
     attr_accessor :outbound_data,:connection_live
@@ -25,11 +22,11 @@ module Packet
       @initialized = true
       @connection_live = true
       @outbound_data = []
-      post_init if respond_to?(:post_init)
+      post_init
     end
 
     def close_connection(sock = nil)
-      unbind if respond_to?(:unbind)
+      unbind
       reactor.cancel_write(connection)
       reactor.remove_connection(connection)
     end
