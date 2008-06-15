@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__),"spec_helper")
 
-context "For Packet Core using classes" do 
-  setup do 
+context "For Packet Core using classes" do
+  setup do
     class Foo
       include Packet::Core
     end
@@ -9,16 +9,16 @@ context "For Packet Core using classes" do
       include Packet::Core
       after_connection :say_hello
     end
-    
+
     class ConnectionObj; end
   end
-  
+
   specify "should implement after_connection callback working" do
     Foo.respond_to?(:after_connection).should == true
     Foo.respond_to?(:after_unbind).should == true
     Foo.respond_to?(:before_unbind).should == true
   end
-  
+
   specify "accept connection should not inherit callbacks" do
     a = Foo.new
     a.connection_callbacks.should.be {}
@@ -27,11 +27,11 @@ context "For Packet Core using classes" do
     socket_obj.expects(:accept_nonblock).returns(client_socket)
     client_socket.expects(:setsockopt).returns(true)
     client_socket.expects(:fileno).returns(10)
-    
+
     sock_opts = {:socket => socket_obj,:module => ConnectionObj}
     a.accept_connection(sock_opts)
   end
-  
+
   specify "accept_connection should invoke correspoding callbacks" do
     a = Bar.new
     a.expects(:say_hello).returns(true)
@@ -40,11 +40,11 @@ context "For Packet Core using classes" do
     socket_obj.expects(:accept_nonblock).returns(client_socket)
     client_socket.expects(:setsockopt).returns(true)
     client_socket.expects(:fileno).returns(10)
-    
+
     sock_opts = {:socket => socket_obj,:module => ConnectionObj}
     a.accept_connection(sock_opts)
   end
-  
+
   specify "accept_connection should implement methods from Connection module" do
     a = Bar.new
     a.expects(:say_hello).returns(true)
@@ -53,7 +53,7 @@ context "For Packet Core using classes" do
     socket_obj.expects(:accept_nonblock).returns(client_socket)
     client_socket.expects(:setsockopt).returns(true)
     client_socket.expects(:fileno).returns(10)
-    
+
     sock_opts = {:socket => socket_obj,:module => ConnectionObj}
     d = a.accept_connection(sock_opts)
     d.respond_to?(:connection_completed).should == true
@@ -64,47 +64,18 @@ context "For Packet Core using classes" do
     d.respond_to?(:add_periodic_timer).should == true
     d.respond_to?(:add_timer).should == true
   end
-  
-  specify "unbind callbacks for after unbind should work" do
-    class Baz; include Packet::Core; after_unbind :say_hello; end
-    a = Baz.new
-    a.expects(:say_hello).returns(true)
-    socket_obj = mock()
-    client_socket = mock()
-    socket_obj.expects(:accept_nonblock).returns(client_socket)
-    client_socket.expects(:setsockopt).returns(true)
-    client_socket.expects(:fileno).returns(10)
-    
-    sock_opts = {:socket => socket_obj,:module => ConnectionObj}
-    d = a.accept_connection(sock_opts)
-  end
-
-  specify "unbind callbacks for before unbind should work" do
-    class Bleh; include Packet::Core; after_unbind :say_hello; end
-    a = Bleh.new
-    a.expects(:say_hello).returns(true)
-    socket_obj = mock()
-    client_socket = mock()
-    socket_obj.expects(:accept_nonblock).returns(client_socket)
-    client_socket.expects(:setsockopt).returns(true)
-    client_socket.expects(:fileno).returns(10)
-    
-    sock_opts = {:socket => socket_obj,:module => ConnectionObj}
-    d = a.accept_connection(sock_opts)
-  end
-  
 end
 
-context "Packet Core using modules" do 
-  setup do 
+context "Packet Core using modules" do
+  setup do
     class Foo
       include Packet::Core
     end
     module DummyConnection
       def unbind; "unbind"; end
-    end    
+    end
   end
-  
+
   specify "accept_connection should initialize a class instance from the supplied module" do
     a = Foo.new
     a.connection_callbacks.should.be {}
@@ -113,7 +84,7 @@ context "Packet Core using modules" do
     socket_obj.expects(:accept_nonblock).returns(client_socket)
     client_socket.expects(:setsockopt).returns(true)
     client_socket.expects(:fileno).returns(10)
-    
+
     sock_opts = {:socket => socket_obj,:module => DummyConnection}
     d = a.accept_connection(sock_opts)
     d.unbind.should == "unbind"
