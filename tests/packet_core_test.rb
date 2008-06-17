@@ -91,7 +91,33 @@ context "Packet Core using modules" do
   end
 end
 
+context "Behaviour of receive in packet" do
+  setup do
+    class Foo
+      include Packet::Core
+    end
+    module DummyConnection
+    end
+  end
 
+  specify "should invoke internal data callback for data read from unix socket" do
+
+  end
+
+  specify "should invoke external data callback for data read from tcp socket" do
+
+  end
+end
+
+context "Write in Packet" do
+  specify "should watch the socket fd if write is not complete" do
+
+  end
+
+  specify "fd watch should work for both unix and tcp socket" do
+
+  end
+end
 
 
 
