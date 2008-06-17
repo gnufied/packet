@@ -1,6 +1,7 @@
 module Packet
   class BinParser
     attr_accessor :data,:numeric_length,:length_string,:remaining
+    attr_accessor :parser_state
     def initialize
       @size = 0
       @data = []
