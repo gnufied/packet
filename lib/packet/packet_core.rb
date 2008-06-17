@@ -21,6 +21,7 @@ module Packet
         connection_callbacks[:after_connection] << p_method
       end
 
+      # FIXME: following callbacks hasn't been tested and not usable.
       def after_unbind p_method
         connection_callbacks[:after_unbind] ||= []
         connection_callbacks[:after_unbind] << p_method

@@ -64,6 +64,46 @@ context "For Packet Core using classes" do
     d.respond_to?(:add_periodic_timer).should == true
     d.respond_to?(:add_timer).should == true
   end
+
+  specify "start server should register the handle" do
+    a = Foo.new
+    client_connection = stub(:receive_data => "wow")
+    a.start_server("localhost",11000,client_connection)
+    a.listen_sockets.should.not.be.empty
+    a.read_ios.should.not.be.empty
+    fileno = (a.read_ios[0]).fileno
+    a.listen_sockets[fileno][:module].should == client_connection
+  end
+
+  specify "for normal connect" do
+    a = Foo.new
+    client_connection = stub(:receive_data => "wow")
+    a.connect("localhost",8765,client_connection)
+    a.connection_completion_awaited.should.not.be.empty
+    sock_fd = a.connection_completion_awaited.keys[0]
+    a.write_ios[0].fileno == sock_fd
+  end
+
+  specify "for an external connection thats immediately completed" do
+    a = Foo.new
+    client_connection = stub(:receive_data => "wow")
+    a.connect("localhost",8765,client_connection)
+    a.connection_completion_awaited.should.not.be.empty
+    sock_fd = a.connection_completion_awaited.keys[0]
+    a.write_ios[0].fileno == sock_fd
+  end
+
+  specify "reconnect for a diconnected client should attempt reconnection" do
+
+  end
+
+  specify "for a connected connection socket fd should be there in read watchlist" do
+
+  end
+
+  specify "for removing an active connection socket fd should deleted from read/write watchlist" do
+
+  end
 end
 
 context "Packet Core using modules" do
@@ -91,7 +131,7 @@ context "Packet Core using modules" do
   end
 end
 
-context "Behaviour of receive in packet" do
+context "Receive in packet" do
   setup do
     class Foo
       include Packet::Core
@@ -101,7 +141,7 @@ context "Behaviour of receive in packet" do
   end
 
   specify "should invoke internal data callback for data read from unix socket" do
-
+    a = Foo.new
   end
 
   specify "should invoke external data callback for data read from tcp socket" do
