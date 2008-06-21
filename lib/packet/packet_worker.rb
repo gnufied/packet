@@ -20,7 +20,7 @@ module Packet
       t_instance.start_reactor
       t_instance
     end
-    
+
     # copy the inherited attribute in class thats inheriting this class
     def self.inherited(subklass)
       subklass.send(:"connection_callbacks=",connection_callbacks)
@@ -50,8 +50,13 @@ module Packet
 
     # method handles internal requests from internal sockets
     def handle_internal_messages(t_sock)
-      t_data = read_data(t_sock)
-      receive_internal_data(t_data)
+      begin
+        t_data = read_data(t_sock)
+        receive_internal_data(t_data)
+      rescue DisconnectError => sock_error
+        # Means, when there is an error from sockets from which we are reading better just terminate
+        terminate_me()
+      end
     end
 
     def receive_internal_data data
