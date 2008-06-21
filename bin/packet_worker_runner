@@ -21,7 +21,7 @@ module Packet
 
       initial_arg_data = @worker_read_fd.read(initial_arg_data_length)
 
-      Object.const_set(:WORKER_OPTIONS,Marshal.load(initial_arg_data))
+      Packet::WorkerRunner.const_set(:WORKER_OPTIONS,Marshal.load(initial_arg_data))
       require @worker_load_env if @worker_load_env && !@worker_load_env.empty?
       load_worker worker_name
     end
