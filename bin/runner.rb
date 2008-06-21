@@ -4,7 +4,7 @@ EVAL_APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__) + "/.."))
 ["extras","bin","worker","lib"].each { |x| $LOAD_PATH.unshift(EVAL_APP_ROOT + "/#{x}")}
 
 WORKER_ROOT = EVAL_APP_ROOT + "/worker"
-WORKER_LOAD_ENV = EVAL_APP_ROOT + "/extras/foo"
+#WORKER_LOAD_ENV = EVAL_APP_ROOT + "/extras/foo"
 
 require "packet"
 #require "buftok"

@@ -113,7 +113,16 @@ module Packet
       # method opens a socket for listening
       def start_server(ip,port,t_module,&block)
         BasicSocket.do_not_reverse_lookup = true
-        t_socket = TCPServer.new(ip,port.to_i)
+        # Comment TCPServer for the time being
+        #t_socket = TCPServer.new(ip,port.to_i)
+        #t_socket = TCPSocket.
+        t_socket = Socket.new(Socket::AF_INET,Socket::SOCK_STREAM,0)
+        t_socket.setsockopt(Socket::SOL_SOCKET,Socket::SO_REUSEADDR,true)
+        sockaddr = Socket.sockaddr_in(port.to_i,ip)
+        t_socket.bind(sockaddr)
+        t_socket.listen(50)
+        t_socket.setsockopt(Socket::IPPROTO_TCP,Socket::TCP_NODELAY,1)
+
         # t_socket.setsockopt(*@tcp_defer_accept_opts) rescue nil
         listen_sockets[t_socket.fileno] = { :socket => t_socket,:block => block,:module => t_module }
         @read_ios << t_socket

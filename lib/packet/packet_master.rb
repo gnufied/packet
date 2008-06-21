@@ -104,13 +104,8 @@ module Packet
       master_write_end.write(option_dump)
 
       if(!(pid = fork))
-        # $0 = "ruby #{worker_klass.worker_name}"
         [master_write_end,master_read_end].each { |x| x.close }
-
         [worker_read_end,worker_write_end].each { |x| enable_nonblock(x) }
-
-#         worker_klass.start_worker(:write_end => worker_write_end,:read_end => worker_read_end,\
-#                                     :options => worker_options)
         exec form_cmd_line(worker_read_end.fileno,worker_write_end.fileno,t_worker_name,option_dump_length)
       end
       #Process.detach(pid)
