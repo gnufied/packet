@@ -30,28 +30,6 @@ module Packet
       @result_hash[worker_key.to_sym] = result
     end
 
-#     def provide_workers(handler_instance,t_sock)
-#       class << handler_instance
-#         extend Forwardable
-#         attr_accessor :workers,:connection,:reactor, :initialized,:signature
-
-#         def ask_worker(*args)
-#           worker_name = args.shift
-#           data_options = *args
-#           worker_name_key = gen_worker_key(worker_name,data_options[:job_key])
-#           data_options[:client_signature] = connection.fileno
-#           reactor.live_workers[worker_name_key].send_request(data_options)
-#         end
-
-#         def_delegators(:@reactor, :start_server, :connect, :add_periodic_timer, \
-#                          :add_timer, :cancel_timer,:reconnect, :start_worker,:delete_worker)
-
-#       end
-#       handler_instance.worker = @live_workers
-#       handler_instance.connection = t_sock
-#       handler_instance.reactor = self
-#     end
-
     def handle_internal_messages(t_sock)
       sock_fd = t_sock.fileno
       worker_instance = @live_workers[sock_fd]
@@ -127,13 +105,8 @@ module Packet
       master_write_end.write(option_dump)
 
       if(!(pid = fork))
-        # $0 = "ruby #{worker_klass.worker_name}"
         [master_write_end,master_read_end].each { |x| x.close }
-
         [worker_read_end,worker_write_end].each { |x| enable_nonblock(x) }
-
-#         worker_klass.start_worker(:write_end => worker_write_end,:read_end => worker_read_end,\
-#                                     :options => worker_options)
         exec form_cmd_line(worker_read_end.fileno,worker_write_end.fileno,t_worker_name,option_dump_length)
       end
       #Process.detach(pid)
