@@ -50,7 +50,7 @@ module Packet
 
     def delete_worker(worker_options = {})
       worker_name = worker_options[:worker]
-      worker_name_key = gen_worker_key(worker_name,worker_options[:job_key])
+      worker_name_key = gen_worker_key(worker_name,worker_options[:worker_key])
       worker_options[:method] = :exit
       @live_workers[worker_name_key].send_request(worker_options)
     end
@@ -71,7 +71,7 @@ module Packet
 
     def start_worker(worker_options = { })
       worker_name = worker_options[:worker].to_s
-      worker_name_key = gen_worker_key(worker_name,worker_options[:job_key])
+      worker_name_key = gen_worker_key(worker_name,worker_options[:worker_key])
       return if @live_workers[worker_name_key]
       worker_options.delete(:worker)
       begin
@@ -89,8 +89,7 @@ module Packet
       io.fcntl(Fcntl::F_SETFL,Fcntl::O_NONBLOCK | f)
     end
 
-
-    # method should use job_key if provided in options hash.
+    # method should use worker_key if provided in options hash.
     def fork_and_load(worker_klass,worker_options = { })
       t_worker_name = worker_klass.worker_name
       worker_pimp = worker_klass.worker_proxy.to_s
@@ -117,7 +116,7 @@ module Packet
       #Process.detach(pid)
       [master_read_end,master_write_end].each { |x| enable_nonblock(x) }
 
-      worker_name_key = gen_worker_key(t_worker_name,worker_options[:job_key])
+      worker_name_key = gen_worker_key(t_worker_name,worker_options[:worker_key])
 
       if worker_pimp && !worker_pimp.empty?
         require worker_pimp

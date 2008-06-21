@@ -47,42 +47,42 @@ module Packet
     def ask_worker(*args)
       worker_name = args.shift
       data_options = *args
-      worker_name_key = gen_worker_key(worker_name,data_options[:job_key])
+      worker_name_key = gen_worker_key(worker_name,data_options[:worker_key])
       data_options[:client_signature] = connection.fileno
       reactor.live_workers[worker_name_key].send_request(data_options)
     end
     def start_server ip,port,t_module,&block
       reactor.start_server(ip,port,t_module,block)
     end
-    
+
     def connect ip,port,t_module,&block
       reactor.connect(ip,port,t_module,block)
     end
-    
+
     def add_periodic_timer interval, &block
       reactor.add_periodic_timer(interval,block)
     end
-    
+
     def add_timer(t_time,&block)
       reactor.add_timer(t_time,block)
     end
-    
+
     def cancel_timer(t_timer)
       reactor.cancel_timer(t_timer)
     end
-    
+
     def reconnect server,port,handler
       reactor.reconnect(server,port,handler)
     end
-    
+
     def start_worker(worker_options = {})
       reactor.start_worker(worker_options)
     end
-    
+
     def delete_worker worker_options = {}
       reactor.delete_worker(worker_options)
     end
-    
+
   end # end of class Connection
 end # end of module Packet
 
