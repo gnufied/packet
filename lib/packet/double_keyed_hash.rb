@@ -26,6 +26,10 @@ module Packet
       end
     end
 
+    def length
+      @internal_hash.keys.length
+    end
+
     def each
       @internal_hash.each { |key,value| yield(key,value)}
     end
