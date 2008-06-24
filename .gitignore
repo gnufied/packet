@@ -2,4 +2,9 @@ pkg
 extras/foo.rb
 coverage
 TAGS
+bin/*.rbc
+lib/*.rbc
+lib/packet/*.rbc
+worker/*.rbc
+
 
