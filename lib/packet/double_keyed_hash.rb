@@ -1,5 +1,6 @@
 module Packet
   class DoubleKeyedHash
+    include Enumerable
     attr_accessor :internal_hash
     def initialize
       @keys1 = {}
