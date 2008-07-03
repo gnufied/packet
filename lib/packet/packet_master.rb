@@ -137,7 +137,7 @@ module Packet
 #                                     :options => worker_options)
         exec form_cmd_line(worker_read_end.fileno,worker_write_end.fileno,t_worker_name,option_dump_length)
       end
-      #Process.detach(pid)
+      Process.detach(pid)
       [master_read_end,master_write_end].each { |x| enable_nonblock(x) }
 
       worker_name_key = gen_worker_key(t_worker_name,worker_options[:job_key])
