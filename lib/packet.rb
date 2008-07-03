@@ -7,7 +7,7 @@ require "forwardable"
 require "ostruct"
 require "thread"
 require "fcntl"
-require "enumerable"
+#require "enumerable"
 
 require "packet/packet_parser"
 require "packet/packet_guid"

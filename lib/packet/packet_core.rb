@@ -103,6 +103,7 @@ module Packet
           connections.delete(t_sock.fileno)
           t_sock.close
         rescue
+          puts "#{$!.message}"
         end
       end
 
