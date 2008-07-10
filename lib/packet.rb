@@ -10,6 +10,7 @@ require "fcntl"
 #require "enumerable"
 
 require "packet/packet_parser"
+require "packet/packet_invalid_worker"
 require "packet/packet_guid"
 require "packet/packet_helper"
 require "packet/double_keyed_hash"

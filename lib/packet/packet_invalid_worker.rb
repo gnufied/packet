@@ -1,8 +1,8 @@
 module Packet
   class InvalidWorker < RuntimeError
-    attr_accessor :worker_name
-    def initialize worker_name
-      @worker_name = worker_name
+    attr_accessor :message
+    def initialize message
+      @message = message
     end
   end
 end
