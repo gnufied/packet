@@ -85,3 +85,16 @@ context "Packet Parser" do
   end
 
 end
+
+context "Packet parser for erraneous messages" do
+  setup do
+    @packet_parser = Packet::BinParser.new
+  end
+
+  specify "should reject length with error part" do
+    a = "h00000076\004\b{\t:\ttype:\020sync_invoke:\vworker:\017foo_worker:\barg\"\bboy:\022worker_method\"\vbarbar"
+    @packet_parser.extract(a) do |parser_data|
+      raise "Should not be called"
+    end
+  end
+end

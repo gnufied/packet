@@ -117,6 +117,7 @@ module Packet
         # Comment TCPServer for the time being
         #t_socket = TCPServer.new(ip,port.to_i)
         #t_socket = TCPSocket.
+
         t_socket = Socket.new(Socket::AF_INET,Socket::SOCK_STREAM,0)
         t_socket.setsockopt(Socket::SOL_SOCKET,Socket::SO_REUSEADDR,true)
         sockaddr = Socket.sockaddr_in(port.to_i,ip)

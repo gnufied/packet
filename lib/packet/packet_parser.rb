@@ -27,6 +27,7 @@ module Packet
         if @parser_state == 0
           length_to_read =  9 - @length_string.length
           len_str,remaining = remaining.unpack("a#{length_to_read}a*")
+          break if len_str !~ /^\d+$/
           if len_str.length < length_to_read
             @length_string << len_str
             break
