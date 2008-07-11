@@ -1,4 +1,9 @@
 pkg
 extras/foo.rb
-hello.patch
+coverage
+TAGS
+bin/*.rbc
+lib/*.rbc
+lib/packet/*.rbc
+worker/*.rbc
 

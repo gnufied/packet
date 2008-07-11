@@ -12,6 +12,10 @@ class EchoServer
   end
 
   def connection_completed
+    add_timer(3) { say_hello }
+  end
+  def say_hello
+    send_data("Hello \n")
   end
 
   def post_init

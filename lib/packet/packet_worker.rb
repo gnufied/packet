@@ -7,7 +7,6 @@ module Packet
     iattr_accessor :no_auto_load
 
     attr_accessor :worker_started, :worker_options
-    after_connection :provide_workers
 
     # method initializes the eventloop for the worker
     def self.start_worker(messengers = {})
@@ -20,6 +19,11 @@ module Packet
       t_instance.worker_init if t_instance.respond_to?(:worker_init)
       t_instance.start_reactor
       t_instance
+    end
+
+    # copy the inherited attribute in class thats inheriting this class
+    def self.inherited(subklass)
+      subklass.send(:"connection_callbacks=",connection_callbacks)
     end
 
     def self.is_worker?; true; end
@@ -46,8 +50,13 @@ module Packet
 
     # method handles internal requests from internal sockets
     def handle_internal_messages(t_sock)
-      t_data = read_data(t_sock)
-      receive_internal_data(t_data)
+      begin
+        t_data = read_data(t_sock)
+        receive_internal_data(t_data)
+      rescue DisconnectError => sock_error
+        # Means, when there is an error from sockets from which we are reading better just terminate
+        terminate_me()
+      end
     end
 
     def receive_internal_data data
@@ -55,21 +64,6 @@ module Packet
         data_obj = Marshal.load(b_data)
         receive_data(data_obj)
       end
-    end
-
-    # FIXME: this method is being duplicated between packet and worker classes, may be its a
-    # good idea to merge them.
-    def provide_workers(handler_instance,connection)
-      class << handler_instance
-        extend Forwardable
-        attr_accessor :worker, :connection, :reactor, :initialized, :signature
-        include NbioHelper
-        include Connection
-        def_delegators :@reactor, :start_server, :connect, :add_periodic_timer, :add_timer, :cancel_timer,:reconnect
-      end
-      handler_instance.connection = connection
-      handler_instance.worker = self
-      handler_instance.reactor = self
     end
 
     def log log_data

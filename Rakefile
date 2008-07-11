@@ -17,6 +17,7 @@ $LOAD_PATH.unshift __DIR__+'/lib'
 require 'packet'
 
 CLEAN.include ['**/.*.sw?', '*.gem', '.config','*.rbc']
+Dir["tasks/**/*.rake"].each { |rake| load rake }
 
 
 @windows = (PLATFORM =~ /win32/)
@@ -29,17 +30,6 @@ desc "Packages up Packet."
 task :default => [:package]
 
 task :doc => [:rdoc]
-
-
-Rake::RDocTask.new do |rdoc|
-      files = ['README', 'MIT-LICENSE', 'CHANGELOG',
-               'lib/**/*.rb']
-      rdoc.rdoc_files.add(files)
-      rdoc.main = 'README'
-      rdoc.title = 'Packet Docs'
-      rdoc.rdoc_dir = 'doc/rdoc'
-      rdoc.options << '--line-numbers' << '--inline-source'
-end
 
 spec = Gem::Specification.new do |s|
   s.name = NAME
@@ -75,16 +65,6 @@ task :uninstall => [:clean] do
   sh %{#{SUDO} gem uninstall #{NAME}}
 end
 
-##############################################################################
-# SVN
-##############################################################################
-
-desc "Add new files to subversion"
-task :svn_add do
-   system "svn status | grep '^\?' | sed -e 's/? *//' | sed -e 's/ /\ /g' | xargs svn add"
-end
-
-
 desc "Converts a YAML file into a test/spec skeleton"
 task :yaml_to_spec do
   require 'yaml'
@@ -94,9 +74,3 @@ task :yaml_to_spec do
   }.strip
 end
 
-namespace :git do
-  desc "Push changes to central git repo"
-  task :push do
-    sh("git push origin master")
-  end
-end

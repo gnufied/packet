@@ -4,26 +4,27 @@ EVAL_APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__) + "/.."))
 ["extras","bin","worker","lib"].each { |x| $LOAD_PATH.unshift(EVAL_APP_ROOT + "/#{x}")}
 
 WORKER_ROOT = EVAL_APP_ROOT + "/worker"
-WORKER_LOAD_ENV = EVAL_APP_ROOT + "/extras/foo"
+#WORKER_LOAD_ENV = EVAL_APP_ROOT + "/extras/foo"
 
 require "packet"
 #require "buftok"
 
 class Foo
   def receive_data p_data
+    p p_data
     # @tokenizer.extract(p_data).each do |t_data|
     # send_data(p_data)
     #     end
-    @tokenizer.extract(p_data) do |complete_message|
-      client_data = Marshal.load(complete_message)
-      #p "Receieved message in server : #{client_data.join.size}"
-      #ask_worker(:no_proxy_worker,:data => client_data,:type => :request)
-      send_object(client_data)
-    end
+#    @tokenizer.extract(p_data) do |complete_message|
+#      client_data = Marshal.load(complete_message)
+#      #p "Receieved message in server : #{client_data.join.size}"
+#      #ask_worker(:no_proxy_worker,:data => client_data,:type => :request)
+#      send_object(client_data)
+#    end
 
     #     data_callback = Packet::Callback.new { |data| show_result(data) }
     #     workers[:no_proxy_worker].send_request(:data => p_data,:callback => data_callback)
-    # ask_worker(:no_proxy_worker,:data => p_data, :type => :request)
+    ask_worker(:no_proxy_worker,:data => p_data, :type => :request)
     #p reactor.live_workers
     # ask_worker(:dynamic_worker,:job_key => :hello_world, :data => p_data, :type => :request)
   end
@@ -55,6 +56,9 @@ class Foo
 
   def wow
     #puts "Wow"
+  end
+  def unbind
+    puts "Client disconnected"
   end
 end
 

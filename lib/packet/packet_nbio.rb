@@ -5,9 +5,9 @@ module Packet
       return word_parts.map { |x| x.capitalize}.join
     end
 
-    def gen_worker_key(worker_name,job_key = nil)
-      return worker_name if job_key.nil?
-      return "#{worker_name}_#{job_key}".to_sym
+    def gen_worker_key(worker_name,worker_key = nil)
+      return worker_name if worker_key.nil?
+      return "#{worker_name}_#{worker_key}".to_sym
     end
 
     def read_data(t_sock)
