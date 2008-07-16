@@ -218,12 +218,6 @@ end
      end
    end
 
-=== Passing file descriptors to workers :
-  Packet, allows this style of load
-  distribution as well, you can use method send_fd to
-  pass file descriptors to workers. 
-  WARNING: This feature hasn't been tested well.
-
 === Disable auto loading of certain workers:
   Sometimes, you would need to start a
   worker at runtime and don't want this pre-forking mechanism.
