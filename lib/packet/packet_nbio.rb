@@ -13,8 +13,8 @@ module Packet
     def read_data(t_sock)
       sock_data = []
       begin
-        while(t_data = t_sock.read_nonblock((16*1024)-1))
-          #raise DisconnectError.new(t_sock,sock_data.join) if t_data.empty?
+        while(t_data = t_sock.recv_nonblock((16*1024)-1))
+          raise DisconnectError.new(t_sock,sock_data.join) if t_data.empty?
           sock_data << t_data
         end
       rescue Errno::EAGAIN
