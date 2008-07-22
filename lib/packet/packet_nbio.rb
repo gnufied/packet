@@ -13,9 +13,15 @@ module Packet
     def read_data(t_sock)
       sock_data = []
       begin
-        while(t_data = t_sock.recv_nonblock((16*1024)-1))
-          raise DisconnectError.new(t_sock,sock_data.join) if t_data.empty?
-          sock_data << t_data
+        if RUBY_PLATFORM =~ /linux/i
+          while(t_data = t_sock.read_nonblock((16*1024)-1))
+            sock_data << t_data
+          end
+        else
+          while(t_data = t_sock.recv_nonblock((16*1024)-1))
+            raise DisconnectError.new(t_sock,sock_data.join) if t_data.empty?
+            sock_data << t_data
+          end
         end
       rescue Errno::EAGAIN
         return sock_data.join
