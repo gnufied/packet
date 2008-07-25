@@ -53,19 +53,19 @@ module Packet
       t_worker.send_request(data_options)
     end
     def start_server ip,port,t_module,&block
-      reactor.start_server(ip,port,t_module,block)
+      reactor.start_server(ip,port,t_module,&block)
     end
 
     def connect ip,port,t_module,&block
-      reactor.connect(ip,port,t_module,block)
+      reactor.connect(ip,port,t_module,&block)
     end
 
     def add_periodic_timer interval, &block
-      reactor.add_periodic_timer(interval,block)
+      reactor.add_periodic_timer(interval,&block)
     end
 
     def add_timer(t_time,&block)
-      reactor.add_timer(t_time,block)
+      reactor.add_timer(t_time,&block)
     end
 
     def cancel_timer(t_timer)
