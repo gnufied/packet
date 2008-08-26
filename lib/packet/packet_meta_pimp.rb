@@ -1,6 +1,7 @@
 # Class acts as a pimp for workers, which doesn't have a manually created pimp
 # The idea behind a manually added pimp is to let client handle low level messaging
 # beween workers. A meta pimp, does it for you.
+
 class Packet::MetaPimp < Packet::Pimp
   # initializer of pimp
   attr_accessor :callback_hash
