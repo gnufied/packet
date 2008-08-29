@@ -297,8 +297,8 @@ module Packet
 #           end
 #         end
 
-        ready_timers = @timer_hash.collect { |key,timer| timer if timer.run_now ?}.compact
-        ready_timers.each { |timer| timer.run}
+        ready_timers = @timer_hash.collect { |key,timer| timer if timer.run_now? }.compact
+        ready_timers.each { |timer| timer.run }
         @timer_hash.delete_if { |key,timer|
           timer.cancel_flag || (!timer.respond_to?(:interval) && ready_timers.include?(timer)) || false
         }
