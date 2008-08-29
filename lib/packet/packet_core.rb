@@ -87,12 +87,12 @@ module Packet
         rescue Errno::ECONNREFUSED
           actually_connected = false
         end
-
+        connection_completion_awaited.delete(t_sock.fileno)
         read_ios << t_sock if actually_connected
         write_ios.delete(t_sock)
         decorate_handler(t_sock,actually_connected,sock_opts[:sock_addr],\
                            sock_opts[:module],&sock_opts[:block])
-        connection_completion_awaited.delete(t_sock.fileno)
+
       end
 
       # method removes the connection and closes the socket
@@ -100,8 +100,10 @@ module Packet
         read_ios.delete(t_sock)
         write_ios.delete(t_sock)
         begin
-          connections.delete(t_sock.fileno)
-          t_sock.close
+          unless t_sock.closed?
+            connections.delete(t_sock.fileno)
+            t_sock.close
+          end
         rescue
           puts "#{$!.message}"
         end
@@ -284,14 +286,16 @@ module Packet
       end
 
       def check_for_timer_events
-        @timer_hash.each do |key,timer|
-          @timer_hash[key] = nil if timer.cancel_flag
-          if timer.run_now?
+        @timer_hash.delete_if do |key,timer|
+          if timer.cancel_flag
+            true
+          elsif timer.run_now?
             timer.run
-            @timer_hash[key] = nil  if !timer.respond_to?(:interval)
+            (timer.respond_to?(:interval)) ? false : true
+          else
+            false
           end
         end
-        @timer_hash.delete_if { |key,value| value.nil? }
       end
 
       # close the connection with internal specified socket
@@ -323,6 +327,7 @@ module Packet
         handler_instance.reactor = self
         handler_instance.invoke_init unless handler_instance.initialized
         unless actually_connected
+          remove_connection(t_socket)
           handler_instance.unbind
           return
         end
