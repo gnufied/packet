@@ -327,8 +327,8 @@ module Packet
         handler_instance.reactor = self
         handler_instance.invoke_init unless handler_instance.initialized
         unless actually_connected
-          remove_connection(t_socket)
           handler_instance.unbind
+          remove_connection(t_socket)
           return
         end
         handler_instance.signature = binding_str
@@ -336,7 +336,7 @@ module Packet
         # klass = Struct.new(:socket,:instance,:signature,:sock_addr)
         connection_data = { :socket => t_socket,:instance => handler_instance,:signature => binding_str,:sock_addr => sock_addr }
         connections[t_socket.fileno] = connection_data
-#         connections[t_socket.fileno] = klass.new(t_socket,handler_instance,handler_instance.signature,sock_addr)
+        # connections[t_socket.fileno] = klass.new(t_socket,handler_instance,handler_instance.signature,sock_addr)
 
         block.call(handler_instance) if block
         handler_instance.connection_completed #if handler_instance.respond_to?(:connection_completed)
