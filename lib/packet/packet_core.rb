@@ -286,16 +286,22 @@ module Packet
       end
 
       def check_for_timer_events
-        @timer_hash.delete_if do |key,timer|
-          if timer.cancel_flag
-            true
-          elsif timer.run_now?
-            timer.run
-            (timer.respond_to?(:interval)) ? false : true
-          else
-            false
-          end
-        end
+#         @timer_hash.delete_if do |key,timer|
+#           if timer.cancel_flag
+#             true
+#           elsif timer.run_now?
+#             timer.run
+#             (timer.respond_to?(:interval)) ? false : true
+#           else
+#             false
+#           end
+#         end
+
+        ready_timers = @timer_hash.collect { |key,timer| timer if timer.run_now ?}.compact
+        ready_timers.each { |timer| timer.run}
+        @timer_hash.delete_if { |key,timer|
+          timer.cancel_flag || (!timer.respond_to?(:interval) && ready_timers.include?(timer)) || false
+        }
       end
 
       # close the connection with internal specified socket
