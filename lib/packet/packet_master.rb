@@ -106,6 +106,7 @@ module Packet
       if(!(pid = fork))
         [master_write_end,master_read_end].each { |x| x.close }
         [worker_read_end,worker_write_end].each { |x| enable_nonblock(x) }
+
         exec form_cmd_line(worker_read_end.fileno,worker_write_end.fileno,t_worker_name,option_dump_length)
       end
       Process.detach(pid)

@@ -3,8 +3,6 @@ class NoProxyWorker < Packet::Worker
   #set_no_auto_load(true)
   def worker_init
     p "Starting no proxy worker"
-    a = HelloWorld.new
-    puts a.say_hello
   end
 
   def receive_data data_obj
