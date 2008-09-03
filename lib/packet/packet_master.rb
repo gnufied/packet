@@ -102,17 +102,23 @@ module Packet
       option_dump = Marshal.dump(worker_options)
       option_dump_length = option_dump.length
       master_write_end.write(option_dump)
+      worker_name_key = gen_worker_key(t_worker_name,worker_options[:worker_key])
 
       if(!(pid = fork))
         [master_write_end,master_read_end].each { |x| x.close }
         [worker_read_end,worker_write_end].each { |x| enable_nonblock(x) }
-
+        begin
+          if(ARGV[0] == 'start')
+            log_file = File.open("log/#{worker_name_key}.log","w")
+            [STDIN, STDOUT, STDERR].each {|desc| desc.reopen(log_file)}
+          end
+        rescue; end
         exec form_cmd_line(worker_read_end.fileno,worker_write_end.fileno,t_worker_name,option_dump_length)
       end
       Process.detach(pid)
       [master_read_end,master_write_end].each { |x| enable_nonblock(x) }
 
-      worker_name_key = gen_worker_key(t_worker_name,worker_options[:worker_key])
+
 
       if worker_pimp && !worker_pimp.empty?
         require worker_pimp
