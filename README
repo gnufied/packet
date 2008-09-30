@@ -62,8 +62,6 @@ Packet::Reactor.run do |t_reactor|
   t_reactor.connect("en.wikipedia.org",80,WikiHandler)
 end
 
-=== Using Callbacks and Deferables
- Documentation to come.
 
 === Using Workers
   Packet enables you to write simple workers, which will run in 
