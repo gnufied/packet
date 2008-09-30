@@ -227,7 +227,7 @@ end
   to start a worker as usual. It should
   be noted that, forking a worker, which is already
   forked can be disastrous, since worker names are being
-  used as unique keys that represent a worker.
+  used as unique keys that represent a worker.Test
 
 == Performance:
   Although written in pure ruby, packet performs
