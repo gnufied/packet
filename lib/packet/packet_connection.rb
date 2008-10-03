@@ -46,7 +46,7 @@ module Packet
 
     def ask_worker(*args)
       worker_name = args.shift
-      data_options = *args
+      data_options = args.last
       data_options[:client_signature] = connection.fileno
       t_worker = reactor.live_workers[worker_name]
       raise Packet::InvalidWorker.new("Invalid worker with name #{worker_name} and key #{data_options[:data][:worker_key]}") unless t_worker
