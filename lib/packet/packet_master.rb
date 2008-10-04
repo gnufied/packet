@@ -108,8 +108,8 @@ module Packet
         [master_write_end,master_read_end].each { |x| x.close }
         [worker_read_end,worker_write_end].each { |x| enable_nonblock(x) }
         begin
-          if(ARGV[0] == 'start' && const_defined?(:SERVER_LOGGER))
-            log_file = File.open(SERVER_LOGGER,"w")
+          if(ARGV[0] == 'start' && Object.const_defined?(:SERVER_LOGGER))
+            log_file = File.open(SERVER_LOGGER,"a")
             [STDIN, STDOUT, STDERR].each {|desc| desc.reopen(log_file)}
           end
         rescue; end
