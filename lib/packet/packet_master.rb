@@ -109,10 +109,14 @@ module Packet
         [worker_read_end,worker_write_end].each { |x| enable_nonblock(x) }
         begin
           if(ARGV[0] == 'start' && Object.const_defined?(:SERVER_LOGGER))
-            log_file = File.open(SERVER_LOGGER,"a")
-            [STDIN, STDOUT, STDERR].each {|desc| desc.reopen(log_file)}
+            STDOUT.sync = true
+            STDERR.sync = true
+            log_file = File.open(SERVER_LOGGER,"w+")
+            [STDOUT, STDERR].each {|desc| desc.reopen(log_file)}
           end
-        rescue; end
+        rescue
+          puts $!.backtrace
+        end
         exec form_cmd_line(worker_read_end.fileno,worker_write_end.fileno,t_worker_name,option_dump_length)
       end
       Process.detach(pid)
