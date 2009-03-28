@@ -111,7 +111,8 @@ module Packet
           if(ARGV[0] == 'start' && Object.const_defined?(:SERVER_LOGGER))
             STDOUT.sync = true
             STDERR.sync = true
-            log_file = File.open(SERVER_LOGGER,"w+")
+            log_file = File.open(SERVER_LOGGER,(File::WRONLY | File::APPEND | File::CREAT))
+            log_file.sync = true
             [STDOUT, STDERR].each {|desc| desc.reopen(log_file)}
           end
         rescue
@@ -121,8 +122,6 @@ module Packet
       end
       Process.detach(pid)
       [master_read_end,master_write_end].each { |x| enable_nonblock(x) }
-
-
 
       if worker_pimp && !worker_pimp.empty?
         require worker_pimp
