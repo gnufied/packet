@@ -109,11 +109,7 @@ module Packet
         [worker_read_end,worker_write_end].each { |x| enable_nonblock(x) }
         begin
           if(ARGV[0] == 'start' && Object.const_defined?(:SERVER_LOGGER))
-            STDOUT.sync = true
-            STDERR.sync = true
-            log_file = File.open(SERVER_LOGGER,(File::WRONLY | File::APPEND | File::CREAT))
-            log_file.sync = true
-            [STDOUT, STDERR].each {|desc| desc.reopen(log_file)}
+            redirect_io(SERVER_LOGGER)
           end
         rescue
           puts $!.backtrace
@@ -138,6 +134,27 @@ module Packet
       worker_write_end.close
       read_ios << master_read_end
     end # end of fork_and_load method
+
+    # Free file descriptors and
+    # point them somewhere sensible
+    # STDOUT/STDERR should go to a logfile
+    def redirect_io(logfile_name)
+      begin; STDIN.reopen "/dev/null"; rescue ::Exception; end
+
+      if logfile_name
+        begin
+          STDOUT.reopen logfile_name, "a"
+          STDOUT.sync = true
+        rescue ::Exception
+          begin; STDOUT.reopen "/dev/null"; rescue ::Exception; end
+        end
+      else
+        begin; STDOUT.reopen "/dev/null"; rescue ::Exception; end
+      end
+
+      begin; STDERR.reopen STDOUT; rescue ::Exception; end
+      STDERR.sync = true
+    end
 
     def form_cmd_line *args
       min_string = "packet_worker_runner #{args[0]}:#{args[1]}:#{args[2]}:#{args[3]}"
