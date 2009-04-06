@@ -127,6 +127,7 @@ module Packet
         t_pimp = Packet::MetaPimp.new(master_write_end,pid,self)
         t_pimp.worker_key = worker_name_key
         t_pimp.worker_name = t_worker_name
+        t_pimp.invokable_worker_methods = worker_klass.instance_methods
         @live_workers[worker_name_key,master_read_end.fileno] = t_pimp
       end
 
