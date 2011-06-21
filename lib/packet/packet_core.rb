@@ -140,7 +140,7 @@ module Packet
           check_for_timer_events
           @on_next_tick.call if @on_next_tick
 
-          ready_read_fds,ready_write_fds,read_error_fds = select(read_ios,write_ios,[],0.005)
+          ready_read_fds,ready_write_fds,read_error_fds = select(read_ios,write_ios,[],0.05)
 
           if ready_read_fds && !ready_read_fds.empty?
             handle_read_event(ready_read_fds)
